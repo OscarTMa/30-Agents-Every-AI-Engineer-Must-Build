@@ -1,0 +1,44 @@
+name: Chapter 10 CI - Conversational and Content Creation Agents
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-conversational-content-agents:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Agent 16 (The Empathetic Conversational Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          python 16_empathetic_conversational_agent/main.py
+
+      - name: Quota Cooldown Pause
+        run: |
+          echo "Waiting 25 seconds to respect Gemini Free Tier RPM quotas..."
+          sleep 25
+
+      - name: Run Agent 17 (The Brand Content Creation Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          python 17_brand_content_creation_agent/main.py

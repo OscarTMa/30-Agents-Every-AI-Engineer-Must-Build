@@ -1,0 +1,39 @@
+name: Chapter 13 CI - Healthcare and Scientific Agents
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-health-science-agents:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Agent 24 (Healthcare Intelligence Agent - FHIR & POMDP)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          python 24_healthcare_intelligence_agent/main.py
+
+      - name: Run Agent 25 (Scientific Discovery Agent - Closed-Loop Experimentation)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          python 25_scientific_discovery_agent/main.py

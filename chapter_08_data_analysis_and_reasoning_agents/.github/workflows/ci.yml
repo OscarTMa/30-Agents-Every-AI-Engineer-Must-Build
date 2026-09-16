@@ -1,0 +1,74 @@
+name: Chapter 08 CI - Data Analysis and Reasoning Agents
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-reasoning-agents:
+    name: Validate Data Analysis and Reasoning Agents
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install Scientific & Core Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          pip install google-genai pydantic python-dotenv pandas numpy statsmodels matplotlib
+
+      - name: Execute Agent 10 (Data Analysis Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 10: Data Analysis Agent ==="
+          if [ -f 10_data_analysis_agent/main.py ]; then
+            python 10_data_analysis_agent/main.py
+          else
+            find . -maxdepth 2 -type f -path "*10*/main.py" -exec python {} \;
+          fi
+
+      - name: Free-Tier Quota Cooldown Pause
+        run: |
+          echo "Pausing 20s to prevent RPM 429 exhaustion..."
+          sleep 20
+
+      - name: Execute Agent 11 (Verification and Validation Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 11: Verification & Validation Agent ==="
+          if [ -f 11_verification_validation_agent/main.py ]; then
+            python 11_verification_validation_agent/main.py
+          else
+            find . -maxdepth 2 -type f -path "*11*/main.py" -exec python {} \;
+          fi
+
+      - name: Free-Tier Quota Cooldown Pause
+        run: |
+          echo "Pausing 20s to prevent RPM 429 exhaustion..."
+          sleep 20
+
+      - name: Execute Agent 12 (General Problem Solver)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 12: General Problem Solver ==="
+          if [ -f 12_general_problem_solver/main.py ]; then
+            python 12_general_problem_solver/main.py
+          else
+            find . -maxdepth 2 -type f -path "*12*/main.py" -exec python {} \;
+          fi

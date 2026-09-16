@@ -1,0 +1,62 @@
+name: Chapter 09 CI - Software Development Agents
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-software-agents:
+    name: Validate Software Development Agents
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Upgrade Pip and Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          pip install google-genai pydantic python-dotenv
+
+      - name: Execute Agent 13 (TDG Code Generation Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 13: TDG Code Generation Agent ==="
+          python 13_tdg_codegen_agent/main.py
+
+      - name: API Quota Cooldown Pause
+        run: |
+          echo "Pausing 20s to respect Google Gemini Free-Tier rate limits..."
+          sleep 20
+
+      - name: Execute Agent 14 (Compliance & Security Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 14: Compliance & Security Agent ==="
+          python 14_compliance_security_agent/main.py
+
+      - name: API Quota Cooldown Pause
+        run: |
+          echo "Pausing 20s to respect Google Gemini Free-Tier rate limits..."
+          sleep 20
+
+      - name: Execute Agent 15 (Self-Improving Agent)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          echo "=== Running Agent 15: Self-Improving Agent ==="
+          python 15_self_improving_agent/main.py

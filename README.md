@@ -5,7 +5,7 @@
 [![Author](https://img.shields.io/badge/Author-Oscar%20Tibaduiza-purple.svg)](https://www.datascienceportfol.io/oscartiba)
 
 <div align="center">
-  <img src="assets/Title.jpg" alt="30 Agents Every AI Engineer Must Build Cover" width="340"/>
+  <img src=".assets/Title.jpg" alt="30 Agents Every AI Engineer Must Build Cover" width="340"/>
   <p><em>Reference Architecture implementations based on the book by Imran Ahmad, PhD (Packt Publishing).</em></p>
 </div>
 
